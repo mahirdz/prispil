@@ -1,7 +1,5 @@
 # Prišpil - Web Kartaška Igra (AI Generisan Projekat)
 
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Q5Q7Z8H2K)
-
 Dobrodošli u web implementaciju popularne bosanske kartaške igre **Prišpil**! Ova verzija vam omogućava da igrate protiv kompjuterskog protivnika direktno u vašem web pretraživaču.
 
 **▶️ Igrajte uživo ovdje:** **[https://mahirdz.github.io/prispil/](https://mahirdz.github.io/prispil/)**
