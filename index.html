@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="bs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prišpil Igra</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Glavni naslov igre -->
+    <h1>Prišpil</h1>
+
+    <!-- Inicijalne kontrole (vidljive samo na početku) -->
+    <div id="initial-controls">
+        <p id="initial-message">Dobrodošli!</p>
+        <button id="start-button">Start Nova Igra</button>
+        <button id="toggle-rules-button">Prikaži Pravila</button> <!-- Dugme za pravila -->
+
+        <!-- DIV ZA PRAVILA -->
+        <div id="rules-container" class="hidden rules-box">
+            <h2>Pravila Igre: Prišpil</h2>
+
+            <p><strong>Cilj igre:</strong> Sakupiti što više bodova uzimanjem vrijednih karata iz centralne hrpe, osvajanjem "Banke" i sakupljanjem više karata od protivnika.</p>
+
+            <p><strong>Igrači:</strong> 2 (u ovoj verziji je implementiran 1 igrač protiv kompjutera).</p>
+            <p><em>(Originalno: 2, 3 ili 4 igrača)</em></p>
+
+            <p><strong>Karte:</strong> Standardni špil od 52 karte (bez Džokera).</p>
+
+            <h3>Priprema i Dijeljenje:</h3>
+            <ul>
+                <li><strong>Miješanje:</strong> Karte se promiješaju.</li>
+                <li><strong>Karte za stol:</strong> 4 karte se stave licem prema gore na stol, jedna na drugu, formirajući centralnu hrpu.</li>
+                <li><strong>Zadnja karta:</strong> Karta sa dna špila se pokaže svima (informativno).</li>
+                <li><strong>Dijeljenje ruku:</strong> Svaki igrač dobiva po 6 karata. Ostatak špila se stavlja sa strane.</li>
+            </ul>
+
+            <h3>Tijek Igre:</h3>
+            <ul>
+                <li>Igrač desno od djelitelja (ovdje: Vi) igra prvi.</li>
+                <li>Igrač na potezu gleda gornju kartu na centralnoj hrpi i svoju ruku.</li>
+                <li><strong>Opcija 1: Uzeti hrpu:</strong> Ako igrač ima kartu istog ranga ILI Žandara (J) kao gornja karta na hrpi, može odigrati tu kartu i uzeti CIJELU HRPU sa stola. Odigrana karta i hrpa idu u igračevu gomilu osvojenih karata.</li>
+                <li><strong>Opcija 2: Ne uzeti hrpu (ako može):</strong> Igrač može odabrati da ne uzme hrpu (čak i ako ima odgovarajuću kartu) i umjesto toga odigra jednu kartu na vrh hrpe.</li>
+                <li><strong>Opcija 3: Ne može uzeti hrpu:</strong> Ako igrač nema odgovarajuću kartu ili Žandara, mora odigrati jednu kartu na vrh hrpe.</li>
+                <li><strong>Igranje na prazan stol:</strong> Ako je stol prazan (jer je prethodni igrač uzeo hrpu), igrač na potezu mora odigrati jednu kartu da započne novu hrpu.</li>
+                <li>Igra se nastavlja u krug.</li>
+                <li>Kada se potroše karte iz ruke, dijeli se novih 6 dok ima karata u špilu.</li>
+            </ul>
+
+             <h3>Posebno Pravilo: Banka</h3>
+            <ul>
+                <li>Ako centralna hrpa sadrži samo JEDNU kartu, i igrač je pokupi kartom <strong>ISTOG RANGA</strong> (npr. Sedmicom uzima jedinu Sedmicu na stolu, ili Žandarom (J) uzima jedinog Žandara na stolu), to se zove "Banka".</li>
+                <li>Svaka "Banka" donosi <strong>10 bodova</strong> na kraju runde.</li>
+                <li><em>Napomena: Uzimanje jedne karte Žandarom (J) koja nije Žandar **NIJE** Banka.</em></li>
+            </ul>
+
+            <h3>Kraj Runde i Bodovanje:</h3>
+            <p>Kada su sve karte odigrane:</p>
+            <ul>
+                <li><strong>Bodovne karte (1 bod svaka):</strong>
+                    <ul>
+                        <li>As (A) - 1 bod</li>
+                        <li>Kralj (K) - 1 bod</li>
+                        <li>Dama (Q) - 1 bod</li>
+                        <li>Žandar (J) - 1 bod</li>
+                        <li>Desetka (10) - 1 bod</li>
+                        <li>Dvojka Tref (♣2) - 1 bod</li>
+                        <li><em>(Ukupno 21 bod po kartama u špilu)</em></li>
+                    </ul>
+                </li>
+                 <li><strong>Većina karata:</strong> Igrač koji je sakupio više karata ukupno dobiva <strong>4 boda</strong>. (Neriješeno = 0 bodova).</li>
+                 <li><strong>Banka:</strong> Svaka ostvarena "Banka" donosi <strong>10 bodova</strong>.</li>
+            </ul>
+             <p><strong>Pobjeda:</strong> Igrač sa najviše ukupno sakupljenih bodova na kraju runde je pobjednik.</p>
+        </div>
+        <!-- KRAJ DIV-a ZA PRAVILA -->
+    </div>
+
+    <!-- Glavni kontejner igre (sakriven dok igra ne počne) -->
+    <div id="game-container" class="hidden">
+        <!-- Computer Area -->
+        <div id="computer-area" class="player-area">
+            <h2>Kompjuter</h2>
+            <div id="computer-hand" class="hand">
+                 <!-- Placeholders will be added by JS -->
+            </div>
+             <div class="taken-pile-info"> <!-- Target for computer take animation -->
+                <p>Odnesene karte: <span id="computer-taken-count">0</span></p>
+                <p>Banke: <span id="computer-banks-count">0</span></p>
+            </div>
+        </div>
+
+        <!-- Table Area -->
+        <div id="table-area">
+            <h2>Stol</h2>
+            <div id="table-pile"> <!-- Container for the stack -->
+                 <!-- Cards or placeholder shown here by JS -->
+            </div>
+        </div>
+
+         <!-- Deck Area -->
+        <div id="deck-area">
+             <h2>Špil</h2>
+            <div id="deck" class="card card-back"> <!-- Source for deal animation -->
+                <span id="deck-count">52</span>
+            </div>
+            <div id="last-card-area">
+                 <h2>Zadnja karta:</h2>
+                 <div id="last-card-shown" class="card-placeholder"></div>
+            </div>
+        </div>
+
+        <!-- Player Area -->
+        <div id="player-area" class="player-area">
+             <div class="taken-pile-info"> <!-- Target for player take animation -->
+                <p>Odnesene karte: <span id="player-taken-count">0</span></p>
+                <p>Banke: <span id="player-banks-count">0</span></p>
+            </div>
+            <h2>Ti (Igrač)</h2>
+            <div id="player-hand" class="hand"> <!-- Target for player deal animation -->
+                <!-- Placeholders or player cards shown here -->
+            </div>
+        </div>
+
+         <!-- Controls Area UNUTAR igre (za Restart i poruke u toku igre) -->
+         <div id="controls-area">
+            <button id="restart-button" style="display: none;">Restart Igre</button>
+            <div id="message-area"></div> <!-- Poruka u toku igre -->
+        </div>
+
+    </div> <!-- Kraj #game-container -->
+
+    <!-- Ekran sa rezultatima (inicijalno skriven) -->
+    <div id="results-screen" class="hidden">
+        <h1>Rezultati Runde</h1>
+
+        <div class="results-section">
+            <h2>Igrač</h2>
+            <div class="results-scores">
+                 <p>Bodovi od karata: <span id="results-player-card-points">0</span></p>
+                 <p>Bodovi od najviše karata: <span id="results-player-most-cards-points">0</span></p>
+                 <p>Bodovi od Banki: <span id="results-player-banka-points">0</span></p>
+                 <p><strong>Ukupno Igrač: <span id="results-player-total-score">0</span></strong></p>
+            </div>
+            <h3>Odnesene karte igrača:</h3>
+            <div id="player-results-cards" class="results-card-pile">
+                <!-- Karte igrača će biti dodane ovdje -->
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="results-section">
+            <h2>Kompjuter</h2>
+             <div class="results-scores">
+                 <p>Bodovi od karata: <span id="results-computer-card-points">0</span></p>
+                 <p>Bodovi od najviše karata: <span id="results-computer-most-cards-points">0</span></p>
+                 <p>Bodovi od Banki: <span id="results-computer-banka-points">0</span></p>
+                 <p><strong>Ukupno Kompjuter: <span id="results-computer-total-score">0</span></strong></p>
+            </div>
+            <h3>Odnesene karte kompjutera:</h3>
+            <div id="computer-results-cards" class="results-card-pile">
+                <!-- Karte kompjutera će biti dodane ovdje -->
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="winner-message">
+            <p><strong>Pobjednik: <span id="results-winner-message"></span></strong></p>
+        </div>
+
+        <button id="new-game-button">Započni Novu Igru</button>
+    </div> <!-- Kraj #results-screen -->
+
+    <script src="script.js"></script>
+</body>
+</html>

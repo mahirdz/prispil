@@ -1,0 +1,536 @@
+/* ======================== */
+/* === Osnovni Stilovi === */
+/* ======================== */
+body {
+    font-family: sans-serif;
+    background-color: #006400; /* Tamno zelena pozadina */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 15px 5px;
+    box-sizing: border-box;
+    overflow-x: hidden; /* Spriječi horizontalni scroll */
+}
+
+h1, h2 {
+    text-align: center;
+    color: #FFD700; /* Zlatna boja */
+    text-shadow: 1px 1px 2px black;
+    margin-bottom: 10px;
+    margin-top: 0;
+}
+h1 { font-size: 1.8em; }
+h2 { font-size: 1.1em; margin-top: 5px; margin-bottom: 8px; }
+h3 { text-align: center; color: #eee; font-size: 0.9em; margin-top: 10px; margin-bottom: 5px; }
+
+.hidden { display: none !important; }
+
+/* ======================== */
+/* === Inicijalne Kontrole i Pravila === */
+/* ======================== */
+#initial-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 15px;
+    width: 95%;
+    max-width: 650px;
+}
+
+#initial-controls button {
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #FFD700;
+    color: #333;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+    transition: background-color 0.2s ease;
+    min-width: 150px;
+    margin: 5px; /* Add some margin between buttons */
+}
+#initial-controls button:hover { background-color: #f0c400; }
+#initial-message { margin-top: 10px; margin-bottom: 15px; font-weight: bold; text-align: center; }
+
+#toggle-rules-button {
+    padding: 8px 15px;
+    font-size: 0.9em;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #6ca6cd;
+    color: white;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    transition: background-color 0.2s ease;
+    margin-top: 10px;
+    min-width: 150px;
+}
+#toggle-rules-button:hover { background-color: #5a8fb8; }
+
+.rules-box {
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid #FFD700;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    max-width: 100%;
+    text-align: left;
+    max-height: 60vh;
+    overflow-y: auto;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+    box-sizing: border-box;
+}
+.rules-box h2 { text-align: center; margin-bottom: 15px; font-size: 1.3em; border-bottom: 1px solid #FFD700; padding-bottom: 5px; }
+.rules-box h3 { color: #FFD700; margin-top: 15px; margin-bottom: 5px; font-size: 1.1em; text-align: left; }
+.rules-box p, .rules-box li { font-size: 0.95em; line-height: 1.5; margin-bottom: 8px; }
+.rules-box ul { list-style-type: disc; margin-left: 20px; padding-left: 15px; }
+.rules-box ul ul { list-style-type: circle; margin-top: 5px; margin-left: 15px; padding-left: 10px; }
+.rules-box strong { color: #FFF; }
+.rules-box em { color: #ccc; font-style: italic; font-size: 0.9em;} /* For notes */
+
+/* ======================== */
+/* === Kontejner Igre === */
+/* ======================== */
+#game-container {
+    display: grid;
+    grid-template-areas:
+        "computer computer computer deck"
+        "table table table deck"
+        "player player player controls";
+    grid-template-rows: auto auto 1fr; /* Adjust rows for content */
+    grid-template-columns: 1fr 1fr 1fr 180px; /* Player/Comp take up 3 columns, Deck/Controls take 1 */
+    gap: 10px;
+    padding: 5px;
+    width: 100%;
+    max-width: 1200px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+#computer-area { grid-area: computer; }
+#table-area {
+    grid-area: table;
+    display: flex; /* Center the pile container */
+    justify-content: center;
+    align-items: center; /* Align pile vertically */
+    padding-top: 10px; /* Add some space above the pile */
+    padding-bottom: 10px;
+    /* min-height is set dynamically by JS */
+}
+#player-area { grid-area: player; }
+#deck-area {
+    grid-area: deck;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Align items to the top */
+    padding-top: 10px;
+}
+#controls-area {
+    grid-area: controls;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Align items to the top */
+    padding-top: 10px;
+}
+#controls-area button {
+    padding: 8px 12px;
+    font-size: 0.9em;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 8px;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+    width: 80%;
+    max-width: 130px;
+    background-color: #ff8c00; /* Orange color for restart */
+    color: white;
+}
+#controls-area button:hover { background-color: #e07b00; }
+#message-area {
+    margin-top: 5px;
+    font-weight: bold;
+    min-height: 1.5em; /* Ensure space for messages */
+    text-align: center;
+    width: 100%;
+    font-size: 0.9em;
+    color: #FFD700; /* Make messages stand out */
+}
+
+.player-area {
+    padding: 5px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+.player-area h2 { margin-bottom: 5px; }
+
+.hand {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align cards to the top */
+    min-height: 95px; /* Ensure consistent height for hands */
+    flex-wrap: wrap; /* Allow wrapping if needed on small screens */
+    gap: 3px; /* Space between cards/placeholders */
+    width: 100%;
+    padding: 5px 0;
+    box-sizing: border-box;
+}
+
+#table-pile {
+    position: relative; /* Required for absolute positioning of cards inside */
+    width: 100px; /* Give it some base width for centering */
+    /* min-height will be set by JS based on stack size */
+    display: flex; /* Use flex primarily for placeholder centering when empty */
+    justify-content: center;
+    align-items: center;
+    /* background-color: rgba(255,0,0,0.1); */ /* Optional: for debugging layout */
+}
+
+/* ======================== */
+/* === Stilovi za Karte === */
+/* ======================== */
+.card {
+    width: 60px;
+    height: 90px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border: 1px solid #888;
+    border-radius: 4px;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    position: relative; /* Default positioning */
+    transition: transform 0.2s ease, opacity 0.3s ease, box-shadow 0.2s ease;
+    background-color: white; /* Fallback background */
+    flex-shrink: 0; /* Prevent cards from shrinking in flex container */
+    box-sizing: border-box; /* Include border in width/height calculation */
+}
+
+#player-hand .card:not(.disabled) {
+    cursor: pointer; /* Indicate player cards are clickable */
+}
+#player-hand .card:hover:not(.disabled) {
+    transform: translateY(-8px) scale(1.03); /* Lift effect on hover */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* Enhance shadow on hover */
+}
+.card.disabled {
+    cursor: default;
+    filter: grayscale(60%); /* Make disabled cards less prominent */
+    opacity: 0.7;
+}
+.card-back {
+    background-image: url('assets/cards/card_back.png');
+}
+
+.card-placeholder {
+    width: 60px;
+    height: 90px;
+    border: 2px dashed #aaa;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.05);
+    display: inline-block;
+    margin: 0; /* Let flex gap handle spacing */
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+.card-placeholder.disabled { /* Ensure placeholders also look disabled */
+     cursor: default;
+     opacity: 0.7;
+}
+
+
+#deck {
+    position: relative; /* For positioning the count */
+    margin-top: 0;
+}
+#deck-count {
+    position: absolute;
+    bottom: 3px;
+    right: 3px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-size: 0.75em;
+    font-weight: bold;
+    /* Add transition for smoother hiding/showing if needed */
+    transition: opacity 0.2s ease;
+}
+
+#last-card-area {
+    margin-top: 15px; /* Space below deck */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+#last-card-area h2 {
+    font-size: 0.9em;
+    margin-bottom: 3px;
+}
+#last-card-shown {
+    border-color: #FFD700; /* Highlight border */
+}
+/* Ensure last card shown has same dimensions as regular cards/placeholders */
+#last-card-shown.card,
+#last-card-shown.card-placeholder {
+    width: 60px;
+    height: 90px;
+}
+
+.taken-pile-info {
+    margin-top: 5px;
+    font-size: 0.85em;
+    text-align: center;
+    min-height: 30px; /* Ensure space even if counts are 0 */
+}
+.taken-pile-info p {
+    margin: 1px 0;
+}
+
+/* Style for cards specifically within the table pile (when stacked) */
+#table-pile .card {
+    position: absolute; /* Crucial for stacking */
+    /* 'left', 'top', 'transform' will be set by JS */
+    cursor: default; /* Cards on table are not clickable */
+    /* Remove any hover effects specifically for cards on the table */
+    transition: none; /* Disable transitions for static table cards */
+}
+/* Explicitly prevent hover effect on table cards */
+#table-pile .card:hover {
+    transform: none !important; /* Override any potential transform from general .card:hover */
+    /* Ensure transform set by JS for stacking remains */
+    /* Re-apply the stacking transform if needed, otherwise browser might default */
+    /* Note: JS applies the final transform, so this might be redundant, but safe */
+    /* Example: transform: translateX(calc(-50% + VAR_X_OFFSET)); */
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3); /* Keep default shadow */
+}
+
+/* Optional: Highlight the top card on the table pile */
+#table-pile .card.highlight-card {
+    /* outline: 2px solid yellow; */
+    /* box-shadow: 0 0 10px 3px gold; */
+    /* border: 2px solid gold; */
+    /* Choose one style or combine */
+}
+
+
+/* ======================== */
+/* === Stilovi za Animaciju === */
+/* ======================== */
+.card-animating {
+    position: fixed; /* Use fixed positioning for animation layer */
+    z-index: 1000; /* Ensure animating card is on top */
+    pointer-events: none; /* Prevent interaction during animation */
+    /* Define the transition for movement and opacity */
+    transition: transform 0.45s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.4s ease-out;
+    width: 60px; height: 90px; /* Match card dimensions */
+    background-size: cover;
+    border: 1px solid #aaa; /* Slightly different border during animation */
+    border-radius: 4px;
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5); /* More prominent shadow */
+    background-color: white; /* Ensure background */
+    will-change: transform, opacity; /* Hint for browser performance */
+}
+
+.card-taking {
+    /* Slightly different transition for the fade-out effect when taking */
+    transition: transform 0.55s ease-in, opacity 0.45s ease-in;
+}
+
+.computer-played-card-overlay {
+    /* This class is mainly a marker for JS, but can add styles if needed */
+    /* Example: border: 2px solid yellow; */
+    /* JS handles positioning */
+}
+
+@keyframes countUpdate {
+    0% { transform: scale(1); opacity: 1; color: white; }
+    50% { transform: scale(1.3); opacity: 0.8; color: #FFD700; }
+    100% { transform: scale(1); opacity: 1; color: white; }
+}
+
+/* Klasa koja se dodaje JS-om za pokretanje animacije */
+#deck-count.count-updating {
+    animation: countUpdate 0.2s ease-out; /* Maybe slightly faster animation */
+}
+
+/* ======================== */
+/* === Ekran Rezultata === */
+/* ======================== */
+#results-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 95%;
+    max-width: 900px;
+    padding: 15px;
+    background-color: #004d00; /* Darker green for results */
+    border: 2px solid #FFD700;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    color: white;
+    box-sizing: border-box;
+}
+#results-screen h1 {
+    margin-bottom: 15px;
+    font-size: 1.6em;
+}
+.results-section {
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.15); /* Slight background for sections */
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+.results-section h2 {
+    margin-bottom: 8px;
+    border-bottom: 1px solid #FFD700;
+    padding-bottom: 4px;
+    font-size: 1.1em;
+}
+.results-scores p {
+    margin: 3px 0;
+    font-size: 0.9em;
+}
+.results-scores strong {
+    color: #FFD700;
+}
+#results-screen hr {
+    border: 0;
+    height: 1px;
+    background-color: #aaa;
+    margin: 10px 0;
+    width: 80%;
+}
+.results-card-pile {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Center cards */
+    gap: 2px; /* Small gap between result cards */
+    margin-top: 8px;
+    padding: 5px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    min-height: 50px; /* Ensure some height even if empty */
+    max-height: 180px; /* Limit height and enable scroll */
+    overflow-y: auto; /* Add scroll if too many cards */
+}
+/* Smaller cards in the results list */
+.results-card-pile .card {
+    width: 35px;
+    height: 53px;
+    border-width: 1px;
+    box-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+    cursor: default; /* Result cards not interactive */
+}
+.results-card-pile .card.banka-highlight {
+    border: 2px solid gold; /* Jasan zlatni okvir */
+    box-shadow: 0 0 5px 1px gold; /* Dodaje blagi sjaj */
+    /* Mozete dodati i filter: brightness(1.1); */
+}
+.results-card-pile .card:hover {
+    transform: none; /* No hover effect */
+    box-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+}
+.winner-message {
+    margin-top: 8px;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+    text-align: center;
+}
+.winner-message strong {
+    color: #FFD700;
+}
+#new-game-button {
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #FFD700;
+    color: #333;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+    margin-top: 10px;
+    transition: background-color 0.2s ease;
+}
+#new-game-button:hover {
+    background-color: #f0c400;
+}
+
+/* ======================== */
+/* === Responsivni Stilovi === */
+/* ======================== */
+@media (max-width: 768px) {
+    body { padding: 10px 5px; }
+    h1 { font-size: 1.6em; } h2 { font-size: 1.0em; } h3 { font-size: 0.85em; }
+    #initial-controls { max-width: 95%; }
+    .rules-box { width: 100%; max-height: 70vh; padding: 10px; }
+    .rules-box p, .rules-box li { font-size: 0.9em; }
+    .rules-box h2 { font-size: 1.2em;} .rules-box h3 { font-size: 1.0em;}
+
+    #game-container {
+        grid-template-areas: /* Adjusted layout for smaller screens */
+            "computer computer"
+            "table table"
+            "deck controls"
+            "player player";
+        grid-template-columns: 1fr 1fr; /* Two columns */
+        grid-template-rows: auto auto auto auto; /* Four rows */
+        gap: 8px;
+        padding: 5px;
+    }
+    #deck-area { padding-top: 5px; justify-content: center; } /* Center deck/last card */
+    #controls-area { padding-top: 5px; justify-content: center; } /* Center controls */
+    #controls-area button { width: 90%; max-width: 150px; padding: 10px 15px; font-size: 1em; }
+    #message-area { font-size: 0.85em; min-height: 2.5em; /* More space for messages */ }
+
+    .hand { min-height: 90px; gap: 2px; }
+    #table-pile { max-width: 100%; /* Allow pile to take more width if needed */ }
+    /* Keep card size */
+    .card, .card-placeholder, #last-card-shown.card, #last-card-shown.card-placeholder {
+        width: 60px;
+        height: 90px;
+    }
+
+    #results-screen { padding: 10px; }
+    .results-card-pile { max-height: 150px; } /* Adjust height */
+    #new-game-button, #initial-controls button { padding: 12px 20px; font-size: 1.1em; }
+    #toggle-rules-button { padding: 10px 18px; font-size: 1.0em; }
+}
+
+@media (max-width: 480px) {
+    /* Reduce card size for very small screens */
+    .card, .card-placeholder, #last-card-shown.card, #last-card-shown.card-placeholder {
+        width: 50px;
+        height: 75px;
+    }
+    .hand { min-height: 80px; gap: 2px; }
+    #table-pile { width: 80px; /* Adjust pile base width */ }
+    /* JS will adjust min-height based on 75px card height */
+
+    .results-card-pile .card { width: 30px; height: 45px; }
+    #game-container { grid-template-columns: 1fr 130px; /* Smaller fixed column */ }
+}
+
+@media (max-width: 360px) {
+     body { font-size: 13px; }
+     h1 { font-size: 1.3em; }
+     .card, .card-placeholder, #last-card-shown.card, #last-card-shown.card-placeholder {
+         width: 45px;
+         height: 67px;
+     }
+     .hand { min-height: 72px; gap: 1px; }
+     #table-pile { width: 70px; /* Adjust pile base width */ }
+     /* JS will adjust min-height based on 67px card height */
+     .results-card-pile .card { width: 28px; height: 42px; }
+     #game-container { grid-template-columns: 1fr 110px; /* Even smaller fixed column */ }
+}
